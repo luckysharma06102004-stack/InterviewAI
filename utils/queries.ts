@@ -1,54 +1,64 @@
 import { cache } from "react";
 import { db } from "./db";
 import { auth } from "@clerk/nextjs/server";
-import { courses, userProgress } from "./schema";
+import { MockInterview, Question, UserAnswer } from "./schema";
 import { eq } from "drizzle-orm";
 
-// Fetches user progress for the authenticated user
-export const getUserProgress = cache(async () => {
+/* =========================
+   GET ALL MOCK INTERVIEWS
+========================= */
+export const getMockInterviews = cache(async () => {
   try {
     const { userId } = await auth();
 
-    if (!userId) {
-      return null; // Return null if no userId is found
-    }
+    if (!userId) return [];
 
-    // Query the userProgress table and include related activeCourse data
-    const data = await db.query.userProgress.findFirst({
-      where: eq(userProgress.userId, userId),
-      with: {
-        activeCourse: true,
-      },
-    });
+    const data = await db
+      .select()
+      .from(MockInterview)
+      .where(eq(MockInterview.createdBy, userId));
 
     return data;
   } catch (error) {
-    console.error("Error fetching user progress:", error);
-    throw error; // Rethrow error to handle it at a higher level if needed
+    console.error("Error fetching mock interviews:", error);
+    throw error;
   }
 });
 
-// Fetches all courses
-export const getCourses = cache(async () => {
+/* =========================
+   GET QUESTIONS BY MOCK ID
+========================= */
+export const getQuestionsByMockId = cache(async (mockId: string) => {
   try {
-    // Query the courses table to get all course records
-    const data = await db.select().from(courses);
+    const data = await db
+      .select()
+      .from(Question)
+      .where(eq(Question.mockId, mockId));
+
     return data;
   } catch (error) {
-    console.error("Error fetching courses:", error);
-    throw error; // Rethrow error to handle it at a higher level if needed
+    console.error("Error fetching questions:", error);
+    throw error;
   }
 });
 
-export const getCourseById = cache(async (courseId: number) => {
+/* =========================
+   GET USER ANSWERS
+========================= */
+export const getUserAnswers = cache(async (mockId: string) => {
   try {
-    const data = await db.query.courses.findFirst({
-      where: eq(courses.id, courseId),
-      //Populate units and lessons
-    });
+    const { userId } = await auth();
+
+    if (!userId) return [];
+
+    const data = await db
+      .select()
+      .from(UserAnswer)
+      .where(eq(UserAnswer.mockIdRef, mockId));
+
     return data;
   } catch (error) {
-    console.error("Error fetching Courses By Id:", error);
+    console.error("Error fetching user answers:", error);
     throw error;
   }
 });
