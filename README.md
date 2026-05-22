@@ -187,11 +187,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 📸 Screenshots
-
-> _Coming soon — add screenshots of the dashboard, interview flow, and results page here._
-
----
 
 ## 🔮 Roadmap
 
@@ -204,18 +199,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🐳 Docker Support
-
-A `Dockerfile` and `compose.yaml` are included for containerized deployment.
-
-```bash
-# Build and run with Docker Compose
-docker compose up --build
-```
-
-See [README.Docker.md](./README.Docker.md) for detailed Docker instructions.
-
----
 
 ## 🤝 Contributing
 
